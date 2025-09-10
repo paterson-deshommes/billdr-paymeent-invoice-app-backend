@@ -22,18 +22,18 @@ Give examples
 
 ### Installing
 
-
+From the Tools folder, run
 ```
-Give the example
-```
-
-And repeat
-
-```
-until finished
+npm install
 ```
 
-End with an example of getting some data out of the system or using it for a little demo.
+Find your stripe api test secret key at https://dashboard.stripe.com/<YOUR-ACCOUNT-ID>/test/apikeys. Add it to your environment variable. Make sure to restart your IDE so that it picks it up.
+
+From the Tools folder, run
+```
+node cleanup_and_populate_stripe_account.js
+```
+To create new invoices and customers and delete the old ones. For invoices, it will only void previously opened ones. Note that this is optional.
 
 ## Usage <a name = "usage"></a>
 
