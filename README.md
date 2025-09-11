@@ -35,6 +35,21 @@ node cleanup_and_populate_stripe_account.js
 ```
 To create new invoices and customers and delete the old ones. For invoices, it will only void previously opened ones. Note that this is optional.
 
-## Usage <a name = "usage"></a>
+Next, install [python](https://www.python.org/downloads/).
 
-Add notes about how to use the system.
+Create a virtual environment and activate it for isolating your dependencies from your system (optional)
+```
+python -m venv <environment-name>
+.\environment-name>\Scripts/activate
+```
+
+Install the python dependencies
+```
+pip install -r <PATH-TO-REQUIREMENTS.TXT>\requirements.txt
+```
+
+From the PaymentInvoiceBackend folder, run
+```
+python manage.py migrate
+```
+to sync the database.
