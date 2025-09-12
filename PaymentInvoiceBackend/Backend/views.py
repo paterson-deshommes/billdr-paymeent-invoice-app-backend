@@ -1,6 +1,6 @@
 from rest_framework import viewsets
 from rest_framework.response import Response
-from PaymentInvoiceBackend.Backend.serializers import InvoiceSerializer
+from PaymentInvoiceBackend.Backend.serializers import InvoiceSerializer, InvoiceDetailsSerializer
 from rest_framework.exceptions import ValidationError
 from stripe.error import InvalidRequestError
 import stripe
@@ -64,7 +64,19 @@ class InvoiceViewSet(viewsets.ViewSet):
 
     def retrieve(self, request, pk=None):
         try:
-            invoice = stripe.Invoice.retrieve(pk)
+            invoice = stripe.Invoice.retrieve(
+                pk,
+                expand=["lines.data"]
+                )
+            invoice_line_items = invoice.lines
+            invoice_line_items_result_set = []
+            for item in invoice_line_items.auto_paging_iter():
+                print(item.id)
+                invoice_line_items_result_set.append({
+                    "description": item.description,
+                    "amount": item.amount,
+                    "quantity": item.quantity
+                })
             invoiceResult = {
                 "id": invoice.id,
                 "amount_due": invoice.amount_due / 100,
@@ -73,9 +85,9 @@ class InvoiceViewSet(viewsets.ViewSet):
                 "currency": invoice.currency,
                 "customer_name": invoice.customer_name,
                 "status": invoice.status,
-                "public_invoice_link": invoice.hosted_invoice_url
+                "line_items": invoice_line_items_result_set
             }
-            serializer = InvoiceSerializer(invoiceResult)
+            serializer = InvoiceDetailsSerializer(invoiceResult)
             return Response(serializer.data)
         except InvalidRequestError as e:
             raise ValidationError(str(e))

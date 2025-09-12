@@ -1,5 +1,10 @@
 from rest_framework import serializers
 
+class InvoiceItemSerializer(serializers.Serializer):
+    quantity = serializers.IntegerField()
+    amount = serializers.DecimalField(max_digits=10, decimal_places=2)
+    description = serializers.CharField()
+
 class InvoiceSerializer(serializers.Serializer):
     id = serializers.CharField()
     amount_due = serializers.DecimalField(max_digits=10, decimal_places=2)
@@ -8,4 +13,13 @@ class InvoiceSerializer(serializers.Serializer):
     currency = serializers.CharField()
     customer_name = serializers.CharField()
     status = serializers.CharField()
-    public_invoice_link = serializers.URLField(required=False, allow_null=True)  # optional
+
+class InvoiceDetailsSerializer(serializers.Serializer):
+    id = serializers.CharField()
+    amount_due = serializers.DecimalField(max_digits=10, decimal_places=2)
+    amount_paid = serializers.DecimalField(max_digits=10, decimal_places=2)
+    amount_remaining = serializers.DecimalField(max_digits=10, decimal_places=2)
+    currency = serializers.CharField()
+    customer_name = serializers.CharField()
+    status = serializers.CharField()
+    line_items = InvoiceItemSerializer(many=True)
