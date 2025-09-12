@@ -71,7 +71,6 @@ class InvoiceViewSet(viewsets.ViewSet):
             invoice_line_items = invoice.lines
             invoice_line_items_result_set = []
             for item in invoice_line_items.auto_paging_iter():
-                print(item.id)
                 invoice_line_items_result_set.append({
                     "description": item.description,
                     "amount": item.amount,
@@ -84,6 +83,8 @@ class InvoiceViewSet(viewsets.ViewSet):
                 "amount_remaining": invoice.amount_remaining / 100,
                 "currency": invoice.currency,
                 "customer_name": invoice.customer_name,
+                "customer_email": invoice.customer_email,
+                "customer_phone": invoice.customer_phone,
                 "status": invoice.status,
                 "line_items": invoice_line_items_result_set
             }
