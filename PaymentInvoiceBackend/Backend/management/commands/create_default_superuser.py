@@ -5,7 +5,6 @@ import os
 User = get_user_model()
 
 class Command(BaseCommand):
-    print("hhyy")
     help = "Create default superuser if it doesn't exist"
 
     def handle(self, *args, **options):
