@@ -5,6 +5,7 @@ from rest_framework.exceptions import ValidationError
 from stripe.error import InvalidRequestError
 import stripe
 import os
+from datetime import datetime
 
 stripe.api_key = os.getenv("STRIPE_ACCOUNT_TEST_SECRET_KEY")
 
@@ -66,7 +67,7 @@ class InvoiceViewSet(viewsets.ViewSet):
         try:
             invoice = stripe.Invoice.retrieve(
                 pk,
-                expand=["lines.data"]
+                expand=["lines.data", "payments.data"]
                 )
             invoice_line_items = invoice.lines
             invoice_line_items_result_set = []
@@ -76,6 +77,16 @@ class InvoiceViewSet(viewsets.ViewSet):
                     "amount": item.amount / 100,
                     "quantity": item.quantity,
                     "id": item.id
+                })
+            invoice_payments = invoice.payments
+            invoice_payments_result_set = []
+            for payment in invoice_payments.auto_paging_iter():
+                invoice_payments_result_set.append({
+                    "date": datetime.utcfromtimestamp(payment.created).date(),
+                    "amount_paid": payment.amount_paid / 100 if payment.amount_paid else 0,
+                    "amount_requested": payment.amount_requested / 100,
+                    "status": payment.status,
+                    "id": payment.id
                 })
             invoiceResult = {
                 "id": invoice.id,
@@ -87,7 +98,8 @@ class InvoiceViewSet(viewsets.ViewSet):
                 "customer_email": invoice.customer_email,
                 "customer_phone": invoice.customer_phone,
                 "status": invoice.status,
-                "line_items": invoice_line_items_result_set
+                "line_items": invoice_line_items_result_set,
+                "payments": invoice_payments_result_set
             }
             serializer = InvoiceDetailsSerializer(invoiceResult)
             return Response(serializer.data)
