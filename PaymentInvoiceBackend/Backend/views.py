@@ -74,7 +74,8 @@ class InvoiceViewSet(viewsets.ViewSet):
                 invoice_line_items_result_set.append({
                     "description": item.description,
                     "amount": item.amount / 100,
-                    "quantity": item.quantity
+                    "quantity": item.quantity,
+                    "id": item.id
                 })
             invoiceResult = {
                 "id": invoice.id,

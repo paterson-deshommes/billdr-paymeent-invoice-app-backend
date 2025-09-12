@@ -1,6 +1,7 @@
 from rest_framework import serializers
 
 class InvoiceItemSerializer(serializers.Serializer):
+    id = serializers.CharField()
     quantity = serializers.IntegerField()
     amount = serializers.DecimalField(max_digits=10, decimal_places=2)
     description = serializers.CharField()
