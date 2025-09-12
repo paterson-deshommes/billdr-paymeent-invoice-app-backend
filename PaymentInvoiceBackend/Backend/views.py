@@ -73,7 +73,7 @@ class InvoiceViewSet(viewsets.ViewSet):
             for item in invoice_line_items.auto_paging_iter():
                 invoice_line_items_result_set.append({
                     "description": item.description,
-                    "amount": item.amount,
+                    "amount": item.amount / 100,
                     "quantity": item.quantity
                 })
             invoiceResult = {
