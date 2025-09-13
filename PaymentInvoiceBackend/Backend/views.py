@@ -94,6 +94,7 @@ class InvoiceViewSet(viewsets.ViewSet):
                 "amount_paid": invoice.amount_paid / 100,
                 "amount_remaining": invoice.amount_remaining / 100,
                 "currency": invoice.currency,
+                "customer_id": invoice.customer,
                 "customer_name": invoice.customer_name,
                 "customer_email": invoice.customer_email,
                 "customer_phone": invoice.customer_phone,

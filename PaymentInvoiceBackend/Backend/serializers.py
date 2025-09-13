@@ -28,6 +28,7 @@ class InvoiceDetailsSerializer(serializers.Serializer):
     amount_paid = serializers.DecimalField(max_digits=10, decimal_places=2)
     amount_remaining = serializers.DecimalField(max_digits=10, decimal_places=2)
     currency = serializers.CharField()
+    customer_id = serializers.CharField()
     customer_name = serializers.CharField()
     customer_email = serializers.CharField()
     customer_phone = serializers.CharField()
