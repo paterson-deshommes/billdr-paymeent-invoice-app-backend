@@ -21,6 +21,7 @@ from PaymentInvoiceBackend.Backend import views
 
 router = routers.DefaultRouter()
 router.register(r'invoices',views.InvoiceViewSet, basename='invoice')
+router.register(r'paymentintent',views.PaymentIntentViewSet, basename='paymentintent')
 
 # Wire up our API using automatic URL routing.
 # Additionally, we include login URLs for the browsable API.

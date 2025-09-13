@@ -106,3 +106,83 @@ class InvoiceViewSet(viewsets.ViewSet):
             return Response(serializer.data)
         except InvalidRequestError as e:
             raise ValidationError(str(e))
+
+class PaymentIntentViewSet(viewsets.ViewSet):
+    """
+    ViewSet for payment intent
+    """
+
+    @staticmethod
+    def is_integer(value):
+        try:
+            int(value)  # works for int and float-like strings
+            return True
+        except (TypeError, ValueError):
+            return False
+    
+    def create(self,request):
+        body_params = request.data
+        invoice_id = request.data.get("invoice_id")
+        customer_id = request.data.get("customer_id")
+        amount = request.data.get("amount")
+        currency = request.data.get("currency")
+
+        if invoice_id is None:
+                raise ValidationError({
+                    "detail": "invoice_id is required"
+                })
+        if customer_id is None:
+                raise ValidationError({
+                    "detail": "customer_id is required"
+                })
+        if amount is None:
+                raise ValidationError({
+                    "detail": "amount is required"
+                })
+        if not self.is_integer(amount):
+            raise ValidationError({
+                    "detail": "amount must be a valid integer"
+                })
+        amount = int(amount)
+        if amount < 100:
+           raise ValidationError({
+                    "detail": "Minimal value for amount is 100 cents in the given currency"
+                }) 
+        if currency is None:
+                raise ValidationError({
+                    "detail": "currency is required"
+                })
+        
+        try:
+            invoice = stripe.Invoice.retrieve(invoice_id)
+
+            if invoice.customer != customer_id:
+                raise ValidationError({
+                    "detail": f"customer_id {customer_id} does not match the customer associated with the invoice {invoice.id}"
+                })
+            if invoice.amount_remaining < amount:
+                raise ValidationError({
+                    "detail": f"cannot charge invoice {invoice.id} more than {float(invoice.amount_remaining) * 100} cents"
+                })
+            if invoice.currency != currency:
+                raise ValidationError({
+                    "detail": f"currency {currency} does not match invoice {invoice.id} currency"
+                })
+            
+            payment_intent = stripe.PaymentIntent.create(
+                customer = customer_id,
+                amount = amount,
+                currency = currency,
+                automatic_payment_methods={
+                    'enabled': True
+                }
+            )
+
+            stripe.Invoice.attach_payment(
+                invoice_id,
+                payment_intent = payment_intent.id
+            )
+
+            return Response({"client_secret": payment_intent.client_secret})
+        except InvalidRequestError as e:
+            raise ValidationError(str(e))
