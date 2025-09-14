@@ -6,7 +6,7 @@ import stripe
 from django.views.decorators.csrf import csrf_exempt
 
 logger = logging.getLogger(__name__)
-endpoint_secret = 'whsec_58c1eaddf54fbf28151ed797cfa2c2b54717383578cbc62bb06ab71a85a6b184'
+endpoint_secret = os.getenv("STRIPE_TEST_WEBGOOK_ENDPOINT_SECRET")
 stripe.api_key = os.getenv("STRIPE_ACCOUNT_TEST_SECRET_KEY")
 
 @csrf_exempt
