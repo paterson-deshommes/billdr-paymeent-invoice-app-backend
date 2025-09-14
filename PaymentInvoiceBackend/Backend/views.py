@@ -71,7 +71,7 @@ class InvoiceViewSet(viewsets.ViewSet):
                 )
             invoice_line_items = invoice.lines
             invoice_line_items_result_set = []
-            for item in invoice_line_items.auto_paging_iter():
+            for item in invoice_line_items.data:
                 invoice_line_items_result_set.append({
                     "description": item.description,
                     "amount": item.amount / 100,
@@ -80,7 +80,7 @@ class InvoiceViewSet(viewsets.ViewSet):
                 })
             invoice_payments = invoice.payments
             invoice_payments_result_set = []
-            for payment in invoice_payments.auto_paging_iter():
+            for payment in invoice_payments.data:
                 invoice_payments_result_set.append({
                     "date": datetime.utcfromtimestamp(payment.created).date(),
                     "amount_paid": payment.amount_paid / 100 if payment.amount_paid else 0,
