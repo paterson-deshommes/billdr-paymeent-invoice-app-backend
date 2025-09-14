@@ -18,6 +18,7 @@ from django.urls import include, path
 from rest_framework import routers
 
 from PaymentInvoiceBackend.Backend import views
+from PaymentInvoiceBackend.Backend import webhooks
 
 router = routers.DefaultRouter()
 router.register(r'invoices',views.InvoiceViewSet, basename='invoice')
@@ -27,5 +28,6 @@ router.register(r'paymentintent',views.PaymentIntentViewSet, basename='paymentin
 # Additionally, we include login URLs for the browsable API.
 urlpatterns = [
     path('', include(router.urls)),
-    path('api-auth/', include('rest_framework.urls', namespace='rest_framework'))
+    path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
+    path("stripe/webhook/", webhooks.stripe_webhook, name="stripe-webhook")
 ]
